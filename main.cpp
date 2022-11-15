@@ -24,9 +24,10 @@ public:
         return std::localtime(&diff);
     }
     void info(){
-        std::cout << "Task name: " << name << " ";
+        std::cout << "Task name: " << name << std::endl;
         if(task_time_finish){
-            std::cout << "Duration: " << duration()->tm_min << ":" <<  duration()->tm_sec << std::endl;
+            std::cout << "Duration: " << duration()->tm_hour << ":" << duration()->tm_min << ":";
+            std::cout <<  duration()->tm_sec << std::endl << std::endl;
         } else {
             std::cout << "In process..." << std::endl;
         }
@@ -64,7 +65,7 @@ int main() {
             Task tsk(name);
             tasks.push_back(tsk);
 
-        }else if(command == "finish") {
+        }else if(command == "end") {
             if(!tasks.empty()){
                 finish_task();
             }
