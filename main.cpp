@@ -46,7 +46,7 @@ int main() {
     };
 
     while(true){
-        std::cout << "Choose command begin/finish/status/exit: ";
+        std::cout << "Choose command begin/end/status/exit: ";
         std::string command;
         std::cin >> command;
 
