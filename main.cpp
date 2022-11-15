@@ -20,8 +20,8 @@ public:
     }
 
     std::tm* duration(){
-        std::time_t diff = task_time_finish.value() - task_time_begin;
-        return std::localtime(&diff);
+        std::time_t diff = task_time_finish.value()- task_time_begin;
+        return std::gmtime(&diff);
     }
     void info(){
         std::cout << "Task name: " << name << std::endl;
