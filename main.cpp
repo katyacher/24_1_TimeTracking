@@ -11,21 +11,22 @@ public:
     std::time_t task_time_begin;
     std::optional<std::time_t> task_time_finish;
 
-    Task(std::string name) : name(name), task_time_begin(std::time(nullptr)) {
+    Task(std::string& name) : name(name), task_time_begin(std::time(nullptr)) {
     }
+    Task(const Task&) = default;
 
     void finish(){
-        *task_time_finish = std::time(nullptr);
+        task_time_finish = std::time(nullptr);
     }
 
     std::tm* duration(){
-        std::time_t t = *task_time_finish - task_time_begin;
-        return std::localtime(&t);
+        std::time_t diff = task_time_finish.value() - task_time_begin;
+        return std::localtime(&diff);
     }
     void info(){
-        std::cout << "Task name: " << this->name << std::endl;
-        if(this->task_time_finish){
-            std::cout << "Duration: " << this->duration()->tm_min << ":" <<  this->duration()->tm_sec << std::endl;
+        std::cout << "Task name: " << name << " ";
+        if(task_time_finish){
+            std::cout << "Duration: " << duration()->tm_min << ":" <<  duration()->tm_sec << std::endl;
         } else {
             std::cout << "In process..." << std::endl;
         }
@@ -34,6 +35,14 @@ public:
 
 
 int main() {
+    std::vector<Task> tasks;
+
+    auto finish_task = [&tasks]() {
+        auto it = tasks.end();
+        --it;
+        Task &current = *it;
+        if(!current.task_time_finish) current.finish();
+    };
 
     while(true){
         std::cout << "Choose command begin/finish/status/exit: ";
@@ -45,36 +54,30 @@ int main() {
             return 0;
         }
 
-        std::vector<Task> tasks;
-
         if(command == "begin"){
             if(!tasks.empty()){
-                Task &current = *tasks.end();
-                if(!current.task_time_finish) current.finish();
+                finish_task();
             }
             std::cout << "Enter tne name of your task: ";
             std::string name;
             std::cin >> name;
-            Task current_task = Task(name);
-            tasks.push_back(current_task);
+            Task tsk(name);
+            tasks.push_back(tsk);
+
         }else if(command == "finish") {
             if(!tasks.empty()){
-                Task &current = *tasks.end();
-                if(!current.task_time_finish) current.finish();
+                finish_task();
             }
         }else if(command == "status") {
             if(!tasks.empty()) {
-                for(auto item: tasks){
+                for(auto& item: tasks){
                     item.info();
                 }
             } else {
                 std::cout << "There are no tasks." << std::endl;
             }
         }
-
     }
-
-
 }
 
 
